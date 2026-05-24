@@ -6,6 +6,7 @@ const COLORS = {
     math: '#b388ff',
     food: '#ffb74d',
     sports: '#69f0ae',
+    profile: '#f472b6',
     user: '#ff6b9d',
     default: '#90a4ae'
 };
@@ -27,10 +28,11 @@ let bounds = { minX: -1, maxX: 1, minY: -1, maxY: 1 };
 
 // Keywords for fake embedding generation
 const KEYWORDS = {
-    cs: ['algorithm', 'data', 'tree', 'graph', 'array', 'linked', 'hash', 'stack', 'queue', 'sort', 'binary', 'dynamic', 'programming', 'recursion', 'pointer', 'node', 'search', 'insert', 'bfs', 'dfs'],
-    math: ['calculus', 'matrix', 'probability', 'theorem', 'integral', 'derivative', 'linear', 'algebra', 'equation', 'function', 'prime', 'modular', 'combinatorics', 'permutation', 'eigenvalue'],
+    cs: ['algorithm', 'data', 'tree', 'graph', 'array', 'linked', 'hash', 'stack', 'queue', 'sort', 'binary', 'dynamic', 'programming', 'recursion', 'pointer', 'node', 'search', 'insert', 'bfs', 'dfs', 'java', 'javascript', 'python', 'react', 'nodejs', 'express', 'fastapi', 'mongodb', 'redis', 'mysql', 'api', 'backend', 'frontend', 'distributed', 'system', 'compiler', 'packet', 'bytebuffer'],
+    math: ['calculus', 'matrix', 'probability', 'theorem', 'integral', 'derivative', 'linear', 'algebra', 'equation', 'function', 'prime', 'modular', 'combinatorics', 'permutation', 'eigenvalue', 'p50', 'p99', 'latency', 'throughput', 'cgpa', '621000', '5000'],
     food: ['food', 'pizza', 'sushi', 'ramen', 'pasta', 'recipe', 'cook', 'eat', 'restaurant', 'dish', 'ingredient', 'flavor', 'spice', 'noodle', 'bread', 'croissant', 'taco', 'fish', 'rice'],
-    sports: ['sport', 'basketball', 'football', 'tennis', 'chess', 'swim', 'game', 'play', 'score', 'team', 'athlete', 'competition', 'match', 'tournament', 'olympic', 'dribble', 'tackle']
+    sports: ['sport', 'basketball', 'football', 'tennis', 'chess', 'swim', 'game', 'play', 'score', 'team', 'athlete', 'competition', 'match', 'tournament', 'olympic', 'dribble', 'tackle', 'leadership', 'team', 'delegated', 'technical', 'head', 'ignitia'],
+    profile: ['vidit', 'pandey', 'cognizant', 'programmer', 'analyst', 'trainee', 'intern', 'aktu', 'kanpur', 'education', 'btech', 'phone', 'email', 'contact', 'portfolio', 'github', 'linkedin', 'leetcode', 'forge', 'axiomvault', 'dpi', 've-compiler', 'compiler', 'stair', 'hostinger', 'nginx', 'ssl', 'vps', 'azure', 'aws', 'ec2', 'vpc', 'vpn', 'playwright', 'selenium', 'cucumber', 'jenkins', 'devops', 'docker', 'redis', 'mongodb', 'socket', 'websocket', 'queue', 'dlq', 'backoff', 'jitter', 'encryption', 'aes', 'rsa', 'pbkdf2', 'webcrypto', 'fastapi', 'isolation', 'forest', 'packet', 'tls', 'sni', 'bytebuffer', 'pywhatkit', 'certification', 'mern', 'freelance']
 };
 
 // -----------------------------------------------------------------------------
@@ -91,12 +93,12 @@ function switchTab(tabId) {
 function textToEmbedding(text) {
     const t = text.toLowerCase();
     const ws = t.split(/\s+/);
-    const scores = { cs: 0, math: 0, food: 0, sports: 0 };
+    const scores = { cs: 0, math: 0, food: 0, sports: 0, profile: 0 };
     
     for (const w of ws) {
         for (const [cat, kws] of Object.entries(KEYWORDS)) {
             for (const kw of kws) {
-                if (w.includes(kw) || kw.startsWith(w)) {
+                if (w.length >= 3 && (w.includes(kw) || kw.startsWith(w) || kw.includes(w))) {
                     scores[cat] += 0.35;
                     break;
                 }
@@ -122,7 +124,9 @@ function textToEmbedding(text) {
     fill(3, scores.math);
     fill(6, scores.food);
     fill(9, scores.sports);
-    // Use string hashing for the user data dimensions (12-15) to ensure deterministic embeddings
+    fill(12, scores.profile);
+
+    // Use string hashing for the user/profile dimensions (12-15) to ensure deterministic embeddings
     let hash = 0;
     for (let i = 0; i < t.length; i++) {
         hash = ((hash << 5) - hash) + t.charCodeAt(i);
@@ -135,8 +139,15 @@ function textToEmbedding(text) {
     const h3 = (Math.abs((hash >> 16) % 100) / 100) * 0.7 + 0.1;
     const h4 = (Math.abs((hash >> 24) % 100) / 100) * 0.7 + 0.1;
 
-    // Default dimensions based on the hash if no keywords match
-    emb[12] = h1; emb[13] = h2; emb[14] = h3; emb[15] = h4;
+    // Default dimensions based on the hash if no profile keywords match
+    if (scores.profile < 0.01) {
+        emb[12] = h1; emb[13] = h2; emb[14] = h3; emb[15] = h4;
+    } else {
+        emb[12] = Math.max(emb[12], h1 * 0.35);
+        emb[13] = Math.max(emb[13], h2 * 0.35);
+        emb[14] = Math.max(emb[14], h3 * 0.35);
+        emb[15] = Math.max(emb[15], h4 * 0.35);
+    }
     
     return emb;
 }
