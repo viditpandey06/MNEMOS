@@ -20,3 +20,6 @@ maven.zip
 .vscode/
 *.swp
 .DS_Store
+
+# Local interview preparation notes
+MNEMOS_INTERVIEW_PREP.md
