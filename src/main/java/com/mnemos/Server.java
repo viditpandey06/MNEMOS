@@ -18,6 +18,7 @@ public class Server {
     private static final Gson gson = new Gson();
 
     public static void main(String[] args) {
+        int port = getPort();
         VectorStore store = new VectorStore(DIMS);
         DemoVectors.load(store);
 
@@ -28,10 +29,10 @@ public class Server {
                     it.anyHost();
                 });
             });
-        }).start(8080);
+        }).start("0.0.0.0", port);
 
         System.out.println("=== MNEMOS VectorDB Engine ===");
-        System.out.println("http://localhost:8080");
+        System.out.println("http://localhost:" + port);
         System.out.println(store.size() + " vectors | " + DIMS + " dims | HNSW+KD-Tree+BruteForce");
 
         app.get("/api/search", ctx -> {
@@ -158,5 +159,13 @@ public class Server {
             v[i] = Double.parseDouble(parts[i]);
         }
         return v;
+    }
+
+    private static int getPort() {
+        String port = System.getenv("PORT");
+        if (port == null || port.isBlank()) {
+            return 8080;
+        }
+        return Integer.parseInt(port);
     }
 }

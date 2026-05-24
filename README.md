@@ -40,6 +40,8 @@ java -jar target/mnemos-1.0.jar
 ```
 Navigate to `http://localhost:8080`.
 
+The server reads the `PORT` environment variable when present, which makes it compatible with hosts such as Render. Without `PORT`, it defaults to `8080` locally.
+
 ## Docker / Render Deployment
 
 This project uses a multi-stage Dockerfile and is ready to be deployed to Render or Railway.

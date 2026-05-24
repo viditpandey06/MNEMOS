@@ -1,5 +1,5 @@
 // Configuration
-const API = 'http://localhost:8080/api';
+const API = `${window.location.origin}/api`;
 const DIMS = 16;
 const COLORS = {
     cs: '#00d9ff',
