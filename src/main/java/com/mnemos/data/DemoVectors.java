@@ -67,7 +67,7 @@ public class DemoVectors {
 
         // Vidit Pandey profile and resume knowledge (12-15)
         store.insert("Vidit Pandey: Software Engineer, Java and full-stack developer, portfolio project author", "profile",
-            new double[]{0.74, 0.70, 0.66, 0.18, 0.14, 0.16, 0.07, 0.08, 0.06, 0.12, 0.10, 0.11, 0.94, 0.90, 0.88, 0.92});
+            new double[]{0.72, 0.68, 0.66, 0.18, 0.08, 0.08, 0.08, 0.08, 0.08, 0.16, 0.08, 0.08, 0.88, 0.88, 0.81, 0.77});
         store.insert("Contact: Vidit Pandey, phone +91 7355258137, email viditpandey06@gmail.com", "profile",
             new double[]{0.22, 0.20, 0.18, 0.10, 0.09, 0.08, 0.06, 0.07, 0.06, 0.08, 0.07, 0.08, 0.92, 0.94, 0.88, 0.90});
         store.insert("Education: B.Tech Computer Science from AKTU Kanpur, 2021 to 2025, CGPA 7.65", "profile",

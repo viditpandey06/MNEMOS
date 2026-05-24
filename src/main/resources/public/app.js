@@ -126,6 +126,14 @@ function textToEmbedding(text) {
     fill(9, scores.sports);
     fill(12, scores.profile);
 
+    if (scores.profile > 0.01) {
+        emb[0] = Math.max(emb[0], 0.72 + jitter());
+        emb[1] = Math.max(emb[1], 0.68 + jitter());
+        emb[2] = Math.max(emb[2], 0.66 + jitter());
+        emb[3] = Math.max(emb[3], 0.18 + jitter());
+        emb[9] = Math.max(emb[9], 0.16 + jitter());
+    }
+
     // Use string hashing for the user/profile dimensions (12-15) to ensure deterministic embeddings
     let hash = 0;
     for (let i = 0; i < t.length; i++) {
