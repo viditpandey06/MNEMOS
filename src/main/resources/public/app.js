@@ -21,6 +21,57 @@ let pulsePhase = 0;
 let currentAlgo = 'hnsw';
 let searchResults = [];
 
+const SEARCH_SUGGESTIONS = [
+    'who is Vidit',
+    'FORGE distributed queue',
+    'AXIOMVAULT encryption',
+    'Java DPI engine',
+    'LeetCode DSA',
+    'Playwright Selenium Cucumber',
+    'binary search tree',
+    'linear algebra',
+    'pizza ramen',
+    'football chess'
+];
+
+const CURATED_INSERTS = [
+    {
+        id: 'fruit-tastes',
+        title: 'Fruit tastes',
+        metadata: 'Fruit tastes: apple and mango are sweet, while chips are salty',
+        text: 'Apple is a crisp sweet fruit. Mango is a tropical sweet fruit. Chips are salty snacks.',
+        embedding: [0.07, 0.08, 0.06, 0.10, 0.08, 0.07, 0.92, 0.90, 0.84, 0.06, 0.07, 0.06, 0.08, 0.07, 0.06, 0.05]
+    },
+    {
+        id: 'nlp-doc',
+        title: 'NLP retrieval',
+        metadata: 'NLP retrieval: embeddings map documents and queries into vector space',
+        text: 'Semantic retrieval stores documents as embeddings and finds nearby query vectors.',
+        embedding: [0.88, 0.82, 0.86, 0.30, 0.24, 0.22, 0.08, 0.07, 0.08, 0.09, 0.08, 0.07, 0.24, 0.20, 0.18, 0.16]
+    },
+    {
+        id: 'travel-doc',
+        title: 'Travel itinerary',
+        metadata: 'Travel itinerary: beaches, hotels, flights and local food planning',
+        text: 'A travel plan includes flights, hotels, beach visits, sightseeing and local food.',
+        embedding: [0.10, 0.08, 0.09, 0.12, 0.10, 0.09, 0.48, 0.44, 0.42, 0.20, 0.18, 0.16, 0.18, 0.16, 0.14, 0.12]
+    },
+    {
+        id: 'health-doc',
+        title: 'Fitness routine',
+        metadata: 'Fitness routine: running, swimming, training, recovery and nutrition',
+        text: 'A balanced fitness routine combines training, swimming, running, recovery and nutrition.',
+        embedding: [0.10, 0.09, 0.08, 0.14, 0.12, 0.10, 0.22, 0.20, 0.18, 0.88, 0.84, 0.80, 0.12, 0.10, 0.09, 0.08]
+    },
+    {
+        id: 'finance-doc',
+        title: 'Finance basics',
+        metadata: 'Finance basics: budgeting, investing, compound interest and risk',
+        text: 'Personal finance uses budgeting, investing, compound interest and risk management.',
+        embedding: [0.18, 0.16, 0.14, 0.82, 0.78, 0.74, 0.08, 0.07, 0.08, 0.10, 0.09, 0.08, 0.16, 0.14, 0.12, 0.10]
+    }
+];
+
 // DOM Elements
 const sc = document.getElementById('scatter');
 const ctx = sc.getContext('2d');
@@ -30,7 +81,7 @@ let bounds = { minX: -1, maxX: 1, minY: -1, maxY: 1 };
 const KEYWORDS = {
     cs: ['algorithm', 'data', 'tree', 'graph', 'array', 'linked', 'hash', 'stack', 'queue', 'sort', 'binary', 'dynamic', 'programming', 'recursion', 'pointer', 'node', 'search', 'insert', 'bfs', 'dfs', 'java', 'javascript', 'python', 'react', 'nodejs', 'express', 'fastapi', 'mongodb', 'redis', 'mysql', 'api', 'backend', 'frontend', 'distributed', 'system', 'compiler', 'packet', 'bytebuffer'],
     math: ['calculus', 'matrix', 'probability', 'theorem', 'integral', 'derivative', 'linear', 'algebra', 'equation', 'function', 'prime', 'modular', 'combinatorics', 'permutation', 'eigenvalue', 'p50', 'p99', 'latency', 'throughput', 'cgpa', '621000', '5000'],
-    food: ['food', 'pizza', 'sushi', 'ramen', 'pasta', 'recipe', 'cook', 'eat', 'restaurant', 'dish', 'ingredient', 'flavor', 'spice', 'noodle', 'bread', 'croissant', 'taco', 'fish', 'rice'],
+    food: ['food', 'pizza', 'sushi', 'ramen', 'pasta', 'recipe', 'cook', 'eat', 'restaurant', 'dish', 'ingredient', 'flavor', 'spice', 'noodle', 'bread', 'croissant', 'taco', 'fish', 'rice', 'apple', 'mango', 'fruit', 'sweet', 'salty', 'salt', 'chips', 'snack'],
     sports: ['sport', 'basketball', 'football', 'tennis', 'chess', 'swim', 'game', 'play', 'score', 'team', 'athlete', 'competition', 'match', 'tournament', 'olympic', 'dribble', 'tackle', 'leadership', 'team', 'delegated', 'technical', 'head', 'ignitia'],
     profile: ['vidit', 'pandey', 'cognizant', 'programmer', 'analyst', 'trainee', 'intern', 'aktu', 'kanpur', 'education', 'btech', 'phone', 'email', 'contact', 'portfolio', 'github', 'linkedin', 'leetcode', 'forge', 'axiomvault', 'dpi', 've-compiler', 'compiler', 'stair', 'hostinger', 'nginx', 'ssl', 'vps', 'azure', 'aws', 'ec2', 'vpc', 'vpn', 'playwright', 'selenium', 'cucumber', 'jenkins', 'devops', 'docker', 'redis', 'mongodb', 'socket', 'websocket', 'queue', 'dlq', 'backoff', 'jitter', 'encryption', 'aes', 'rsa', 'pbkdf2', 'webcrypto', 'fastapi', 'isolation', 'forest', 'packet', 'tls', 'sni', 'bytebuffer', 'pywhatkit', 'certification', 'mern', 'freelance']
 };
@@ -42,6 +93,8 @@ window.onload = () => {
     resizeCanvas();
     window.addEventListener('resize', resizeCanvas);
     loadItems();
+    renderSearchSuggestions();
+    renderCuratedInsertList();
     requestAnimationFrame(renderScatter);
 
     // Event Listeners
@@ -87,6 +140,16 @@ function switchTab(tabId) {
     document.getElementById(`tab-${tabId}`).classList.remove('hidden');
 }
 
+function hasDemoSignal(text) {
+    const words = text.toLowerCase().split(/\s+/);
+    return words.some(w => {
+        if (w.length < 3) return false;
+        return Object.values(KEYWORDS).some(kws =>
+            kws.some(kw => w === kw || w.includes(kw) || (w.length >= 4 && kw.startsWith(w)))
+        );
+    });
+}
+
 // -----------------------------------------------------------------------------
 // Logic: Embeddings & PCA
 // -----------------------------------------------------------------------------
@@ -98,7 +161,7 @@ function textToEmbedding(text) {
     for (const w of ws) {
         for (const [cat, kws] of Object.entries(KEYWORDS)) {
             for (const kw of kws) {
-                if (w.length >= 3 && (w.includes(kw) || kw.startsWith(w) || kw.includes(w))) {
+                if (w.length >= 3 && (w === kw || w.includes(kw) || (w.length >= 4 && kw.startsWith(w)))) {
                     scores[cat] += 0.35;
                     break;
                 }
@@ -141,16 +204,18 @@ function textToEmbedding(text) {
         hash |= 0;
     }
     
-    // Generate pseudo-random values between 0.1 and 0.8 based on the hash
-    const h1 = (Math.abs(hash % 100) / 100) * 0.7 + 0.1;
-    const h2 = (Math.abs((hash >> 8) % 100) / 100) * 0.7 + 0.1;
-    const h3 = (Math.abs((hash >> 16) % 100) / 100) * 0.7 + 0.1;
-    const h4 = (Math.abs((hash >> 24) % 100) / 100) * 0.7 + 0.1;
+    // Keep hash fallback modest so unknown words do not accidentally dominate a semantic cluster.
+    const h1 = (Math.abs(hash % 100) / 100) * 0.25 + 0.08;
+    const h2 = (Math.abs((hash >> 8) % 100) / 100) * 0.25 + 0.08;
+    const h3 = (Math.abs((hash >> 16) % 100) / 100) * 0.25 + 0.08;
+    const h4 = (Math.abs((hash >> 24) % 100) / 100) * 0.25 + 0.08;
 
-    // Default dimensions based on the hash if no profile keywords match
-    if (scores.profile < 0.01) {
+    const hasAnyScore = Object.values(scores).some(score => score > 0.01);
+
+    // Default dimensions based on the hash only when no demo category matches.
+    if (!hasAnyScore) {
         emb[12] = h1; emb[13] = h2; emb[14] = h3; emb[15] = h4;
-    } else {
+    } else if (scores.profile > 0.01) {
         emb[12] = Math.max(emb[12], h1 * 0.35);
         emb[13] = Math.max(emb[13], h2 * 0.35);
         emb[14] = Math.max(emb[14], h3 * 0.35);
@@ -249,6 +314,16 @@ async function loadItems() {
 async function runSearch() {
     const text = document.getElementById('qInput').value.trim();
     if (!text) return;
+
+    if (!hasDemoSignal(text)) {
+        searchResults = [];
+        hitIds.clear();
+        queryPoint = null;
+        document.getElementById('latBig').textContent = 'demo';
+        document.getElementById('latSub').textContent = 'use suggested queries or curated inserts';
+        document.getElementById('resultsList').innerHTML = '<div class="text-xs text-muted text-center py-4 leading-relaxed">MNEMOS uses explainable 16D demo embeddings, not general world knowledge. Use the suggested queries or insert curated records first.</div>';
+        return;
+    }
     
     const k = document.getElementById('kSlider').value;
     const metric = document.getElementById('metric').value;
@@ -288,6 +363,44 @@ async function runSearch() {
         
     } catch (err) {
         console.error("Search failed:", err);
+    }
+}
+
+async function insertSelectedData() {
+    const selected = [...document.querySelectorAll('.curated-insert:checked')]
+        .map(input => CURATED_INSERTS.find(item => item.id === input.value))
+        .filter(Boolean);
+    const status = document.getElementById('insertStatus');
+    
+    if (!selected.length) {
+        status.innerHTML = '<span class="text-red-400">Select at least one dataset.</span>';
+        return;
+    }
+    
+    status.innerHTML = '<span class="text-muted">Inserting selected vectors...</span>';
+    
+    try {
+        for (const item of selected) {
+            const res = await fetch(`${API}/insert`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    metadata: item.metadata,
+                    category: 'user',
+                    embedding: item.embedding
+                })
+            });
+
+            if (!res.ok) {
+                throw new Error(`Failed to insert ${item.title}`);
+            }
+        }
+        
+        status.innerHTML = '<span class="text-green-400">Ingested into all indices</span>';
+        document.querySelectorAll('.curated-insert:checked').forEach(input => input.checked = false);
+        await loadItems();
+    } catch (err) {
+        status.innerHTML = '<span class="text-red-400">Failed to connect to engine</span>';
     }
 }
 
@@ -362,6 +475,41 @@ function renderSearchResults() {
             </div>
         `;
     }).join('');
+}
+
+function renderSearchSuggestions() {
+    const container = document.getElementById('searchSuggestions');
+    if (!container) return;
+
+    container.innerHTML = SEARCH_SUGGESTIONS.map(query => `
+        <button type="button" class="text-left text-[10px] px-2 py-1 rounded border border-border text-muted hover:text-text hover:border-accent transition-colors" data-query="${query}">
+            ${query}
+        </button>
+    `).join('');
+
+    container.querySelectorAll('button').forEach(btn => {
+        btn.addEventListener('click', () => {
+            document.getElementById('qInput').value = btn.dataset.query;
+            runSearch();
+        });
+    });
+}
+
+function renderCuratedInsertList() {
+    const container = document.getElementById('curatedInsertList');
+    if (!container) return;
+
+    container.innerHTML = CURATED_INSERTS.map(item => `
+        <label class="block bg-bg border border-border rounded p-3 cursor-pointer hover:border-user/60 transition-colors">
+            <div class="flex items-start gap-3">
+                <input type="checkbox" class="curated-insert mt-1 accent-user" value="${item.id}">
+                <div>
+                    <div class="text-xs text-text font-medium mb-1">${item.title}</div>
+                    <div class="text-[11px] text-muted leading-relaxed">${item.text}</div>
+                </div>
+            </div>
+        </label>
+    `).join('');
 }
 
 function renderUserList() {

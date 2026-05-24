@@ -68,9 +68,17 @@
                 
                 <!-- Search Query -->
                 <div>
+                    <div class="bg-accent/10 border border-accent/30 p-3 rounded text-[11px] text-text/85 leading-relaxed mb-4">
+                        <strong class="text-accent block mb-1">Explainable demo embeddings</strong>
+                        MNEMOS uses 16D synthetic vectors to demonstrate vector database internals. It is not a general language model or world-knowledge assistant.
+                    </div>
                     <h2 class="text-[10px] uppercase tracking-widest text-muted mb-2 font-semibold">Semantic Search</h2>
-                    <input type="text" id="qInput" placeholder="Try: binary tree, pizza..." class="w-full bg-[#07080f] border border-border rounded px-3 py-2 text-sm focus:outline-none focus:border-accent text-text placeholder-muted/50 mb-2">
+                    <input type="text" id="qInput" placeholder="Use a suggested demo query..." class="w-full bg-[#07080f] border border-border rounded px-3 py-2 text-sm focus:outline-none focus:border-accent text-text placeholder-muted/50 mb-2">
                     <button id="searchBtn" class="w-full bg-accent hover:bg-accent/80 text-white rounded px-3 py-2 font-medium transition-colors shadow-[0_0_15px_rgba(108,99,255,0.3)]">SEARCH VECTOR SPACE</button>
+                    <div>
+                        <h2 class="text-[10px] uppercase tracking-widest text-muted mt-4 mb-2 font-semibold">Suggested Queries</h2>
+                        <div id="searchSuggestions" class="grid grid-cols-1 gap-1.5"></div>
+                    </div>
                 </div>
 
                 <!-- Algorithm -->
@@ -168,14 +176,13 @@
             <!-- Tab Content: User Data -->
             <div id="tab-userdata" class="tab-content hidden flex-1 overflow-y-auto p-5 flex flex-col gap-6">
                 <div class="bg-user/10 border border-user/30 p-4 rounded-lg text-xs text-text/90 leading-relaxed">
-                    <strong class="text-user mb-1 block">Live Ingestion Engine</strong>
-                    Type any text below. MNEMOS will instantly generate a 16D semantic embedding and insert it into the HNSW graph, KD-Tree, and Brute Force indices.
+                    <strong class="text-user mb-1 block">Curated Ingestion Engine</strong>
+                    Select one or more demo records. MNEMOS inserts their 16D vectors into the HNSW graph, KD-Tree, and Brute Force indices.
                 </div>
                 
                 <div class="flex flex-col gap-3">
-                    <input type="text" id="docTitle" placeholder="Document Title (e.g., My Favorite Band)" class="w-full bg-[#07080f] border border-border rounded px-3 py-2 text-sm focus:outline-none focus:border-user text-text">
-                    <textarea id="docText" rows="4" placeholder="Paste your knowledge here..." class="w-full bg-[#07080f] border border-border rounded px-3 py-2 text-sm focus:outline-none focus:border-user text-text resize-none"></textarea>
-                    <button onclick="insertUserData()" class="w-full bg-user hover:bg-user/80 text-white rounded px-3 py-2 font-medium transition-colors shadow-[0_0_15px_rgba(255,107,157,0.3)]">EMBED & INSERT</button>
+                    <div id="curatedInsertList" class="flex flex-col gap-2"></div>
+                    <button onclick="insertSelectedData()" class="w-full bg-user hover:bg-user/80 text-white rounded px-3 py-2 font-medium transition-colors shadow-[0_0_15px_rgba(255,107,157,0.3)]">INSERT SELECTED VECTORS</button>
                     <div id="insertStatus" class="text-xs text-center text-muted h-4"></div>
                 </div>
 
@@ -204,6 +211,6 @@
         </div>
     </div>
 
-    <script src="/app.js"></script>
+    <script src="/app.js?v=20260524-demo-guard"></script>
 </body>
 </html>

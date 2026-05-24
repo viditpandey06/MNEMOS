@@ -25,7 +25,6 @@ Open the live demo and search for:
 
 ```text
 who is Vidit
-Cognizant Azure testing
 FORGE distributed queue
 AXIOMVAULT encryption
 Java DPI engine
@@ -280,4 +279,3 @@ The backend binds to `0.0.0.0:$PORT`, which makes it compatible with Render and 
 ## Note On Use
 
 This project is built for learning, interview discussion, and portfolio demonstration. You are welcome to explore the code and learn from it, but please do not copy or present it as your own work without proper credit.
-

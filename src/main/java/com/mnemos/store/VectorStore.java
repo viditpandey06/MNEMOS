@@ -69,6 +69,9 @@ public class VectorStore {
             rawHits = kdTree.knn(query, k, distFn);
         } else {
             rawHits = hnsw.knn(query, k, 50, distFn);
+            if (rawHits.isEmpty() || rawHits.get(0).getDistance() > 0.35) {
+                rawHits = bruteForce.knn(query, k, distFn);
+            }
         }
         
         long endTime = System.nanoTime();

@@ -74,8 +74,6 @@ public class DemoVectors {
             new double[]{0.70, 0.66, 0.62, 0.48, 0.42, 0.40, 0.06, 0.07, 0.06, 0.08, 0.07, 0.08, 0.90, 0.86, 0.92, 0.88});
         store.insert("Cognizant: Programmer Analyst Trainee since Jan 2025, promoted from intern within 6 months", "profile",
             new double[]{0.66, 0.62, 0.58, 0.12, 0.10, 0.10, 0.06, 0.07, 0.06, 0.16, 0.14, 0.12, 0.93, 0.89, 0.91, 0.90});
-        store.insert("Cognizant Azure testing: led test strategy, analyzed client infrastructure, planned execution approaches", "profile",
-            new double[]{0.68, 0.60, 0.56, 0.18, 0.14, 0.13, 0.06, 0.07, 0.06, 0.20, 0.18, 0.16, 0.91, 0.88, 0.92, 0.89});
         store.insert("Automation frameworks: Playwright, Selenium Java, Cucumber, task delegation and QA architecture", "profile",
             new double[]{0.76, 0.70, 0.68, 0.14, 0.12, 0.10, 0.06, 0.07, 0.06, 0.18, 0.16, 0.14, 0.90, 0.92, 0.88, 0.91});
         store.insert("HLD and AI solutions: contributed to high-level design discussions and proposed AI-driven delivery approaches", "profile",
