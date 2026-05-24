@@ -93,15 +93,12 @@ The seeded database includes a dedicated profile cluster for Vidit Pandey's resu
 
 - Education and contact details
 - Cognizant experience
-- Azure testing strategy
 - Playwright, Selenium, and Cucumber automation
 - FORGE distributed task queue engine
 - AXIOMVAULT encrypted messaging platform
 - Enterprise DPI Engine in Java
 - VE-COMPILER package
 - Cloud, security, systems, and DSA skills
-
-This turns the project into both a vector database demo and an interactive portfolio search engine.
 
 ## Architecture
 
@@ -279,9 +276,6 @@ The backend binds to `0.0.0.0:$PORT`, which makes it compatible with Render and 
 - Add index serialization and reload support.
 - Improve delete handling for graph indexes.
 
-## Interview Talking Point
-
-MNEMOS is not just a frontend demo. It is a compact vector database engine that shows how semantic search works below the API layer: vectors, distance metrics, top-k retrieval, exact search, approximate graph search, benchmarking, and visualization.
 
 ## Note On Use
 
